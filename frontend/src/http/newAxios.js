@@ -1,6 +1,5 @@
 import { message } from 'ant-design-vue';
 import axios from 'axios';
-import router from '@/router';
 
 const newAxios = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -34,7 +33,6 @@ newAxios.interceptors.response.use(
                 case 401:
                     setTimeout(() => {
                         message.warning(error.response.data.message)
-                        router.push('/')
                     }, 1000)
                     break;
                 // 请求错误
