@@ -6,8 +6,8 @@ const fs = require('fs');
 const https = require('https');
 const WebSocket = require('ws');
 
-const privateKey = fs.readFileSync('path-to/private-key.pem', 'utf8');
-const certificate = fs.readFileSync('path-to/certificate.pem', 'utf8');
+const privateKey = fs.readFileSync('/etc/nginx/ssl/chenjinxu.top.key', 'utf8');
+const certificate = fs.readFileSync('/etc/nginx/ssl/chenjinxu.top.pem', 'utf8');
 
 const app = express();
 
@@ -15,7 +15,7 @@ const conn = mysql.createConnection({
   user:'',          //用户名
   password:'',  //密码
   host:'',     //主机（默认都是local host）
-  database:'third'     //数据库名
+  database:''     //数据库名
 });
 
 app.use(cors());
@@ -32,16 +32,17 @@ conn.connect(err => {
     }, 5000);
 
     // 连接成功后导入路由
-    const getwordRouter = require('./modle/getword')(conn);
-
-    app.use('/getword', getwordRouter);
+    const loginRouter = require('./modle/login')(conn);
+    const registerdRouter = require('./modle/register')(conn);
+    app.use('/login', loginRouter);
+    app.use('/register', registerdRouter);
   }
 });
 
 // Create an HTTPS service identical to the HTTP service.
 const httpsServer = https.createServer({ key: privateKey, cert: certificate }, app);
-httpsServer.listen(6000, () => {
-  console.log('HTTPS Server is running on https://localhost:6000');
+httpsServer.listen(6001, () => {
+  console.log('HTTPS Server is running on https://localhost:6001');
 });
 
 // Then create a WebSocket server by fixing it on the HTTPS server
